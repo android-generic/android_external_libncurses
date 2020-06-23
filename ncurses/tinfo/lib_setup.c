@@ -73,9 +73,6 @@ MODULE_ID("$Id: lib_setup.c,v 1.207 2020/02/02 23:34:34 tom Exp $")
 # include <sys/ptem.h>
 #endif
 
-#if HAVE_LANGINFO_CODESET
-#include <langinfo.h>
-#endif
 
 /*
  * SCO defines TIOCGSIZE and the corresponding struct.  Other systems (SunOS,
@@ -568,11 +565,6 @@ _nc_unicode_locale(void)
     int result = 0;
 #if defined(_WIN32) && USE_WIDEC_SUPPORT
     result = 1;
-#elif HAVE_LANGINFO_CODESET
-    char *env = nl_langinfo(CODESET);
-    result = !strcmp(env, "UTF-8");
-    T(("_nc_unicode_locale(%s) ->%d", env, result));
-#else
     char *env = _nc_get_locale();
     if (env != 0) {
 	if (strstr(env, ".UTF-8") != 0) {
