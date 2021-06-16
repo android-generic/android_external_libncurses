@@ -67,7 +67,7 @@ initscr(void)
 	_nc_globals.init_screen = TRUE;
 
 	env = getenv("TERM");
-	(void) VALID_TERM_ENV(env, "unknown");
+	(void) VALID_TERM_ENV(env, "linux");
 
 	if ((name = strdup(env)) == NULL) {
 	    fprintf(stderr, "Error opening allocating $TERM.\n");
