@@ -236,6 +236,7 @@ all libs ::	$(AUTO_SRC) ../lib $(LIBRARIES)
 @CHECK_BUILD@all libs ::	report_offsets$(BUILD_EXEEXT)
 
 sources:	$(AUTO_SRC)
+$(AUTO_SRC):	../config.status
 
 $(BINDIR) \
 $(LIBDIR) :
