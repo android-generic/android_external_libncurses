@@ -49,6 +49,7 @@ $(CONFIG_STATUS): $(LOCAL_PATH)/configure
 	else \
 		ln -sf `realpath --relative-to=$(@D) $$f` $(@D); \
 	fi; done;
+	export PATH=/usr/bin:/bin:$$PATH; \
 	cd $(@D); ./$(<F) $(CONFIG_OPTS) && $(MAKE) -C include sources && $(MAKE) -C progs tic infocmp && \
 	./$(<F) $(CONFIG_OPTS) --prefix=/system --disable-database --with-fallbacks='linux vt100 xterm' \
 		--with-tic-path=$$PWD/progs/tic --with-infocmp-path=$$PWD/progs/infocmp || \
@@ -56,6 +57,7 @@ $(CONFIG_STATUS): $(LOCAL_PATH)/configure
 
 GEN_H := $(intermediates)/include/ncurses.h
 $(GEN_H): $(CONFIG_STATUS)
+	export PATH=/usr/bin:/bin:$$PATH; \
 	cd $(@D); $(MAKE) sources; $(MAKE) -C ../ncurses sources
 	ln -sf curses.h $@
 
