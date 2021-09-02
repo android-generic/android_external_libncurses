@@ -44,6 +44,7 @@ CONFIG_OPTS := --without-ada --without-cxx --without-manpages --without-pkg-conf
 CONFIG_STATUS := $(intermediates)/config.status
 $(CONFIG_STATUS): $(LOCAL_PATH)/configure
 	@rm -rf $(@D); mkdir -p $(@D)
+	export PATH=/usr/bin:/bin:$$PATH; \
 	for f in $(<D)/*; do if [ -d $$f ]; then \
 		mkdir -p $(@D)/`basename $$f`; ln -sf `realpath --relative-to=$(@D)/d $$f/*` $(@D)/`basename $$f`; \
 	else \
