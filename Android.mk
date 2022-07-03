@@ -40,7 +40,7 @@ LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 
 intermediates := $(call local-generated-sources-dir)
 
-CONFIG_OPTS := --without-ada --without-cxx --without-manpages --without-pkg-config --without-tests
+CONFIG_OPTS := --without-ada --without-cxx --without-manpages --without-pkg-config --without-tests --without-gpm
 CONFIG_STATUS := $(intermediates)/config.status
 $(CONFIG_STATUS): $(LOCAL_PATH)/configure
 	@rm -rf $(@D); mkdir -p $(@D)
