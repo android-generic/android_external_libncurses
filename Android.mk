@@ -27,6 +27,7 @@ LOCAL_SRC_FILES := $(call all-c-files-under, ncurses/tty)
 LOCAL_SRC_FILES += $(call all-c-files-under, ncurses/base)
 LOCAL_SRC_FILES := $(filter-out ncurses/base/lib_driver.c ncurses/base/sigaction.c, $(LOCAL_SRC_FILES))
 LOCAL_SRC_FILES += $(call all-c-files-under, ncurses/tinfo)
+LOCAL_SRC_FILES += $(call all-c-files-under, ncurses/widechar)
 LOCAL_SRC_FILES := $(filter-out ncurses/tinfo/doalloc.c ncurses/tinfo/make_keys.c ncurses/tinfo/tinfo_driver.c, $(LOCAL_SRC_FILES))
 LOCAL_SRC_FILES += \
 	ncurses/trace/lib_trace.c \
@@ -40,7 +41,7 @@ LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 
 intermediates := $(call local-generated-sources-dir)
 
-CONFIG_OPTS := --without-ada --without-cxx --without-manpages --without-pkg-config --without-tests --without-gpm
+CONFIG_OPTS := --without-ada --without-cxx --without-manpages --without-pkg-config --without-tests --enable-widec --without-gpm
 CONFIG_STATUS := $(intermediates)/config.status
 $(CONFIG_STATUS): $(LOCAL_PATH)/configure
 	@rm -rf $(@D); mkdir -p $(@D)
