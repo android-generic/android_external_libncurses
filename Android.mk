@@ -136,3 +136,21 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := libncurses
 
 include $(BUILD_STATIC_LIBRARY)
+
+# build tput
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := progs/tput.c progs/tparm_type.c progs/clear_cmd.c \
+				   progs/reset_cmd.c progs/transform.c progs/tty_settings.c
+
+LOCAL_CFLAGS := $(NCURSES_CFLAGS)
+
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/progs
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_C_INCLUDES)
+
+LOCAL_MODULE := tput
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_SHARED_LIBRARIES := libncurses
+
+include $(BUILD_EXECUTABLE)
