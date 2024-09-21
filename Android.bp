@@ -1,0 +1,203 @@
+config_opts = "--without-ada --without-cxx --without-manpages --without-pkg-config --without-tests --enable-widec --without-gpm"
+
+ncurses_cflags = [
+    "-DHAVE_CONFIG_H",
+    "-U_XOPEN_SOURCE",
+    "-D_XOPEN_SOURCE=500",
+    "-U_POSIX_C_SOURCE",
+    "-D_POSIX_C_SOURCE=199506L",
+    "-D_FILE_OFFSET_BITS=64",
+    "-DNDEBUG",
+    "-Wno-unused-parameter",
+]
+
+gen_ncurses_sources = [
+    "ncurses/codes.c",
+    "ncurses/comp_captab.c",
+    "ncurses/comp_userdefs.c",
+    "ncurses/expanded.c",
+    "ncurses/fallback.c",
+    "ncurses/lib_gen.c",
+    "ncurses/lib_keyname.c",
+    "ncurses/names.c",
+    "ncurses/unctrl.c",
+]
+
+gen_headers = [
+    "ncurses/init_keytry.h",
+    "include/config.h",
+    "include/curses.h",
+    "include/hashsize.h",
+    "include/ncurses_cfg.h",
+    "include/ncurses_def.h",
+    "include/ncurses_dll.h",
+    "include/parametrized.h",
+    "include/termcap.h",
+    "include/term.h",
+    "include/unctrl.h",
+    "include/ncurses.h",
+]
+
+gen_ncurses_headers = [
+    "init_keytry.h",
+]
+
+gen_include_headers = [
+    "config.h",
+    "curses.h",
+    "hashsize.h",
+    "ncurses_cfg.h",
+    "ncurses_def.h",
+    "ncurses_dll.h",
+    "parametrized.h",
+    "termcap.h",
+    "term.h",
+    "unctrl.h",
+    "ncurses.h",
+]
+
+genrule {
+    name: "libncurses_gen",
+    cmd: "export PATH=/usr/bin:/bin:$$PATH && "
+       + "cp -r external/libncurses/. $(genDir);"
+       + "cd $(genDir) && "
+       + "./configure " + config_opts + " && "
+       + "make -C include sources && "
+       + "make -C progs tic infocmp && "
+       + "./configure " + config_opts + " "
+       + "--prefix=/system --disable-database --with-fallbacks='linux vt100 xterm' "
+       + "--with-tic-path=$$(pwd)/progs/tic --with-infocmp-path=$$(pwd)/progs/infocmp && "
+       + "cd include && "
+       + "make sources && "
+       + "make -C ../ncurses sources && "
+       + "cp curses.h ncurses.h",
+    srcs: ["**/*"],
+    out: gen_ncurses_sources + gen_headers,
+}
+
+genrule {
+    name: "libncurses_gen_ncurses_sources",
+    srcs: [ ":libncurses_gen" ],
+    cmd: "cp -fpr $(in) $(genDir)/ncurses/",
+    out: gen_ncurses_sources,
+}
+
+genrule {
+    name: "libncurses_gen_ncurses_headers",
+    srcs: [ ":libncurses_gen" ],
+    cmd: "cp -fpr $(in) $(genDir)/",
+    out: gen_ncurses_headers,
+}
+
+genrule {
+    name: "libncurses_gen_include_headers",
+    srcs: [ ":libncurses_gen" ],
+    cmd: "cp -fpr $(in) $(genDir)/",
+    out: gen_include_headers,
+}
+
+// Define the module type for libncurses
+cc_library_shared {
+    name: "libncurses",
+    srcs: [
+        "ncurses/tty/**/*.c",
+        "ncurses/base/**/*.c",
+        "ncurses/tinfo/**/*.c",
+        "ncurses/widechar/**/*.c",
+        "ncurses/trace/lib_trace.c",
+        "ncurses/trace/varargs.c",
+        "ncurses/trace/visbuf.c",
+    ],
+    exclude_srcs: [
+        "ncurses/base/lib_driver.c",
+        "ncurses/base/sigaction.c",
+        "ncurses/tinfo/doalloc.c",
+        "ncurses/tinfo/make_keys.c",
+        "ncurses/tinfo/tinfo_driver.c",
+    ],
+    cflags: ncurses_cflags,
+    local_include_dirs: ["include", "ncurses"],
+    export_include_dirs: ["include", "ncurses", "menu"],
+    generated_sources: ["libncurses_gen_ncurses_sources"],
+    generated_headers: ["libncurses_gen_ncurses_headers", "libncurses_gen_include_headers"],
+    export_generated_headers: ["libncurses_gen_ncurses_headers", "libncurses_gen_include_headers"],
+}
+
+// Define the module type for libpanel
+cc_library_static {
+    name: "libpanel",
+    srcs: [
+        "panel/**/*.c",
+    ],
+    cflags: ncurses_cflags,
+    local_include_dirs: [
+        "panel",
+    ],
+    export_include_dirs: [
+        "panel",
+    ],
+    shared_libs: [
+        "libncurses",
+    ],
+    generated_headers: ["libncurses_gen_ncurses_headers", "libncurses_gen_include_headers"],
+}
+
+
+// Define the module type for libmenu
+cc_library_static {
+    name: "libmenu",
+    srcs: [
+        "menu/**/*.c",
+    ],
+    cflags: ncurses_cflags,
+    local_include_dirs: [
+        "menu",
+    ],
+    export_include_dirs: [
+        "menu",
+    ],
+    shared_libs: [
+        "libncurses",
+    ],
+    generated_headers: ["libncurses_gen_ncurses_headers", "libncurses_gen_include_headers"],
+}
+
+// Define the module type for libform
+cc_library_static {
+    name: "libform",
+    srcs: [
+        "form/**/*.c",
+    ],
+    cflags: ncurses_cflags,
+    local_include_dirs: [
+        "form",
+    ],
+    export_include_dirs: [
+        "form",
+    ],
+    shared_libs: [
+        "libncurses",
+    ],
+    generated_headers: ["libncurses_gen_ncurses_headers", "libncurses_gen_include_headers"],
+}
+
+// Define the module type for tput
+cc_binary {
+    name: "tput",
+    srcs: [
+        "progs/tput.c",
+        "progs/tparm_type.c",
+        "progs/clear_cmd.c",
+        "progs/reset_cmd.c",
+        "progs/transform.c",
+        "progs/tty_settings.c",
+    ],
+    cflags: ncurses_cflags,
+    local_include_dirs: [
+        "progs",
+    ],
+    shared_libs: [
+        "libncurses",
+    ],
+    generated_headers: ["libncurses_gen_ncurses_headers", "libncurses_gen_include_headers"],
+}
