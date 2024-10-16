@@ -110,8 +110,8 @@ genrule {
 }
 
 // Define the module type for libncurses
-cc_library_shared {
-    name: "libncurses",
+cc_defaults {
+    name: "libncurses_defaults",
     srcs: [
         "ncurses/tty/**/*.c",
         "ncurses/base/**/*.c",
@@ -173,6 +173,17 @@ cc_library_static {
         "libncurses",
     ],
     generated_headers: ["libncurses_gen_ncurses_headers", "libncurses_gen_include_headers"],
+}
+
+cc_library_shared {
+    name: "libncurses",
+    defaults: ["libncurses_defaults"],
+}
+
+cc_library_shared {
+    name: "libncurses_recovery",
+    defaults: ["libncurses_defaults"],
+    recovery: true,
 }
 
 // Define the module type for libform
