@@ -9,6 +9,7 @@ ncurses_cflags = [
     "-D_FILE_OFFSET_BITS=64",
     "-DNDEBUG",
     "-Wno-unused-parameter",
+    "-Wno-error=implicit-function-declaration",
 ]
 
 gen_ncurses_sources = [
@@ -112,6 +113,8 @@ genrule {
 // Define the module type for libncurses
 cc_defaults {
     name: "libncurses_defaults",
+    vendor_available: true,
+    host_supported: true,
     srcs: [
         "ncurses/tty/**/*.c",
         "ncurses/base/**/*.c",
@@ -139,6 +142,8 @@ cc_defaults {
 // Define the module type for libpanel
 cc_library_static {
     name: "libpanel",
+    vendor_available: true,
+    host_supported: true,
     srcs: [
         "panel/**/*.c",
     ],
@@ -159,6 +164,8 @@ cc_library_static {
 // Define the module type for libmenu
 cc_library_static {
     name: "libmenu",
+    vendor_available: true,
+    host_supported: true,
     srcs: [
         "menu/**/*.c",
     ],
@@ -177,6 +184,8 @@ cc_library_static {
 
 cc_library_shared {
     name: "libncurses",
+    vendor_available: true,
+    host_supported: true,
     defaults: ["libncurses_defaults"],
 }
 
@@ -189,6 +198,8 @@ cc_library_shared {
 // Define the module type for libform
 cc_library_static {
     name: "libform",
+    vendor_available: true,
+    host_supported: true,
     srcs: [
         "form/**/*.c",
     ],
